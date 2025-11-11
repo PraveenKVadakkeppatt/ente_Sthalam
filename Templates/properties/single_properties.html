@@ -1,0 +1,250 @@
+
+{% extends "includes/base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+
+<main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title">
+      <div class="heading">
+        <div class="container">
+          <div class="row d-flex justify-content-center text-center">
+            <div class="col-lg-8">
+              <h1 class="heading-title">{{ property.title }}</h1>
+              <p class="mb-0">
+                {{ property.property_type | capfirst }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <nav class="breadcrumbs">
+        <div class="container">
+          <ol>
+            <li><a href="{% url "home" %}">Home</a></li>
+            <li class="current">Property Details</li>
+            <li class="current">{{ property.title }}</li>
+          </ol>
+        </div>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <!-- Property Details Section -->
+    <section id="property-details" class="property-details section">
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row gy-4">
+
+          <div class="col-lg-8">
+
+            <!-- Property Gallery -->
+            <div class="property-gallery" data-aos="fade-up" data-aos-delay="200">
+                <div class="main-image-container image-zoom-container">
+                    <!-- FIX 1: Use img.image.url, not primary_image.image.url if primary_image might be None -->
+                    <img id="main-product-image" 
+                        src="{% if primary_image %}{{ primary_image.image.url }}{% else %}{% static 'images/no-image.jpg' %}{% endif %}" 
+                        alt="{{ primary_image.caption|default:property.title }}" 
+                        class="img-fluid main-property-image" 
+                        data-zoom="{% if primary_image %}{{ primary_image.image.url }}{% endif %}">
+                    
+                    <div class="image-nav-buttons">
+                        <button class="image-nav-btn prev-image" type="button">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <button class="image-nav-btn next-image" type="button">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="thumbnail-gallery thumbnail-list">
+                    {% for img in images %}
+                    <div class="thumbnail-item {% if forloop.first %}active{% endif %}" 
+                        data-image="{{ img.image.url }}">
+                        <img src="{{ img.image.url }}" 
+                            alt="{{ img.caption|default:property.title }}" 
+                            class="img-fluid">
+                    </div>
+                    {% endfor %}
+                </div>
+            </div><!-- End Property Gallery -->
+
+            <!-- Property Description -->
+            <div class="property-description" data-aos="fade-up" data-aos-delay="300">
+              <h3>About This Property</h3>
+              <p>{{ property.description | linebreaks }}</p>
+            </div><!-- End Property Description -->
+
+            <!-- Amenities -->
+
+            {% if property.features %}
+            <div class="property-amenities" data-aos="fade-up" data-aos-delay="400">
+              <h3>Amenities &amp; Features</h3>
+              <div class="row">
+                <div class="col-md-6">
+                  <ul class="features-list">
+                    {% for feature in property.features.split %}
+                    <li><i class="bi bi-check-circle"></i>{{ feature.strip }}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            </div><!-- End Amenities -->
+            {% endif %}
+
+            <!-- Map Section -->
+            <div class="property-map" data-aos="fade-up" data-aos-delay="500">
+              <h3>Location</h3>
+              <div class="map-container">
+                {% if property.location_longitude and property.location_latitude %}
+                <iframe src="https://www.google.com/maps/embed?pb={{property.location_longitude}},{{property.location_latitude}} &z=15&output=embed" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                {% else %}
+                <div class="map-placeholder bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                  <div class="text-center">
+                    <i class="bi bi-map text-muted" style="font-size: 3rem;"></i>
+                    <p class="mt-2 text-muted">Location map not available</p>
+                  </div>
+                </div>
+                {% endif %}
+              </div>
+              <div class="location-details">
+                <h4>Location Information</h4>
+                <p>{{ property.address }}, {{ property.city }}</p>
+              </div>
+            </div><!-- End Map Section -->
+
+          </div>
+
+          <div class="col-lg-4">
+
+            <!-- Property Overview -->
+            <div class="property-overview sticky-top" data-aos="fade-up" data-aos-delay="200">
+              <div class="price-tag">₹{{ property.price }}</div>
+              <div class="property-status">For {{property.purpose}}</div>
+
+              <div class="property-address">
+                <h4>{{ property.address }}</h4>
+                <p>{{ property.city}}</p>
+              </div>
+
+              <div class="property-stats">
+                <div class="stat-item">
+                  <i class="bi bi-house"></i>
+                  <div>
+                    <span class="value">{{property.bedrooms}}</span>
+                    <span class="label">Bedrooms</span>
+                  </div>
+                </div>
+                <div class="stat-item">
+                  <i class="bi bi-droplet"></i>
+                  <div>
+                    <span class="value">{{property.bathrooms}}</span>
+                    <span class="label">Bathrooms</span>
+                  </div>
+                </div>
+                <div class="stat-item">
+                  <i class="bi bi-rulers"></i>
+                  <div>
+                    <span class="value">{{property.area_sqft}}</span>
+                    <span class="label">Sq Ft</span>
+                  </div>
+                </div>
+                 <div class="stat-item">
+                  <i class="bi bi-tree"></i>
+                  <div>
+                    <span class="value">{{ property.furnishing }}</span>
+                    <span class="label">Furnishing</span>
+                  </div>
+                </div>
+                <div class="stat-item">
+                  <i class="bi bi-calendar"></i>
+                  <div>
+                    <span class="value">{{property.year_built}}</span>
+                    <span class="label">Year Built</span>
+                  </div>
+                </div>
+                <div class="stat-item">
+                  <i class="bi bi-car-front"></i>
+                  <div>
+                    <span class="value">{{property.parking_spaces}}</span>
+                    <span class="label">Garage</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Agent Info -->
+              <div class="agent-info">
+                <div class="agent-avatar">
+                  <img src="#" alt="Sarah Johnson" class="img-fluid">
+                </div>
+                <div class="agent-details">
+                  <h4>{{ property.listed_by.full_name }}</h4>
+                  <p class="agent-title">Licensed Real Estate Agent</p>
+                  <p class="agent-phone"><i class="bi bi-telephone"></i>{{ property.listed_by.phone_number }}</p>
+                  <p class="agent-email"><i class="bi bi-envelope"></i>{{ property.listed_by.email }}</p>
+                </div>
+              </div><!-- End Agent Info -->
+
+              <!-- Contact Form -->
+              <div class="contact-form">
+                <h4>Schedule a Tour</h4>
+                <form action="forms/contact.php" method="post" class="php-email-form">
+                  <div class="row">
+                    <div class="col-12 form-group">
+                      <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
+                    </div>
+                    <div class="col-12 form-group">
+                      <input type="email" name="email" class="form-control" placeholder="Your Email" required="">
+                    </div>
+                    <div class="col-12 form-group">
+                      <input type="tel" name="phone" class="form-control" placeholder="Your Phone">
+                    </div>
+
+                    <div class="col-12 form-group">
+                      <input type="text" name="subject" class="form-control" placeholder="Schedule a Tour for date: " value="Interested in: {{ property.title }}" readonly>
+                    </div>
+
+                    <div class="col-12 form-group">
+                      <textarea class="form-control" name="message" rows="4" placeholder="Your Message"></textarea>
+                    </div>
+                    <div class="col-12 text-center">
+                      <div class="loading">Loading</div>
+                      <div class="error-message"></div>
+                      <div class="sent-message">Your message has been sent. Thank you!</div>
+                      <button type="submit" class="btn btn-primary">Schedule Tour</button>
+                    </div>
+                  </div>
+                </form>
+              </div><!-- End Contact Form -->
+
+              <!-- Social Share -->
+              <div class="social-share">
+                <h5>Share This Property</h5>
+                <div class="share-buttons">
+                  <a href="#" class="share-btn facebook"><i class="bi bi-facebook"></i></a>
+                  <a href="#" class="share-btn twitter"><i class="bi bi-twitter"></i></a>
+                  <a href="#" class="share-btn whatsapp"><i class="bi bi-whatsapp"></i></a>
+                  <a href="#" class="share-btn email"><i class="bi bi-envelope"></i></a>
+                  <a href="#" class="share-btn print"><i class="bi bi-printer"></i></a>
+                </div>
+              </div><!-- End Social Share -->
+
+            </div><!-- End Property Overview -->
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section><!-- /Property Details Section -->
+
+  </main>
+
+
+{% endblock  %}

@@ -1,0 +1,340 @@
+
+{% extends "includes/base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+
+<main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title">
+      <div class="heading">
+        <div class="container">
+          <div class="row d-flex justify-content-center text-center">
+            <div class="col-lg-8">
+              <h1 class="heading-title">Properties</h1>
+              {% comment %} <p class="mb-0">
+                Odio et unde deleniti. Deserunt numquam exercitationem. Officiis quo
+                odio sint voluptas consequatur ut a odio voluptatem. Sit dolorum
+                debitis veritatis natus dolores. Quasi ratione sint. Sit quaerat
+                ipsum dolorem.
+              </p> {% endcomment %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <nav class="breadcrumbs">
+        <div class="container">
+          <ol>
+            <li><a href="{% url "home" %}">Home</a></li>
+            <li class="current">Properties</li>
+          </ol>
+        </div>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <!-- Properties Section -->
+    <section id="properties" class="properties section">
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row">
+
+          <div class="col-lg-8">
+
+            <div class="properties-header mb-4">
+              <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div class="view-toggle d-flex gap-2">
+                  {% comment %} <button class="btn btn-outline-secondary btn-sm view-btn active" data-view="grid">
+                    <i class="bi bi-grid-3x3-gap"></i> Grid
+                  </button>
+                  <button class="btn btn-outline-secondary btn-sm view-btn" data-view="list">
+                    <i class="bi bi-list"></i> List
+                  </button> {% endcomment %}
+                </div>
+                {% comment %} <div class="sort-dropdown">
+                  <select class="form-select form-select-sm">
+                    <option>Sort by: Newest</option>
+                    <option>Price: Low to High</option>
+                    <option>Price: High to Low</option>
+                    <option>Most Viewed</option>
+                  </select>
+                </div> {% endcomment %}
+              </div>
+            </div>
+
+            <div class="properties-grid view-grid active" data-aos="fade-up" data-aos-delay="200">
+              <div class="row g-4">
+              {% if properties %}
+                {% for pro in properties %}
+                <div class="col-lg-6 col-md-6">
+                  <div class="property-card">
+                    <div class="property-image">
+                      {% with pro.images.all|first as primary_image%}
+                        {% if primary_image %}
+                            <img src="{{ primary_image.image.url }}" alt="{{ property.title }}">
+                        {% else %}
+                            <img src="{% static 'images/no-image.jpg' %}" alt="No Image">
+                        {% endif %}
+                        {% endwith %}
+                      <div class="property-badges">
+                        {% if pro.is_featured %}
+                        <span class="badge featured">Featured</span>
+                        {% endif %}
+                        <span class="badge for-sale">For {{ pro.purpose | capfirst }}</span>
+                      </div>
+                      <div class="property-overlay">
+                        {% comment %} <button class="favorite-btn"><i class="bi bi-heart"></i></button>
+                        <button class="gallery-btn" data-count="12"><i class="bi bi-images"></i></button> {% endcomment %}
+                      </div>
+                    </div>
+                    <div class="property-content">
+                        {% if pro.purpose == 'rent' %}
+                        <div class="property-price">₹ {{ pro.price }}/month</div>
+                        {% else %}
+                      <div class="property-price">₹ {{ pro.price }}</div>
+                      {% endif %}
+                      <h4 class="property-title">{{ pro.title }}</h4>
+                      <p class="property-location"><i class="bi bi-geo-alt"></i> {{ pro.city }}</p>
+                      <div class="property-features">
+                        <span><i class="bi bi-house"></i> {{ pro.bedrooms }} Bedroom</span>
+                        <span><i class="bi bi-water"></i> {{ pro.bathrooms }} Bathroom </span>
+                        <span><i class="bi bi-arrows-angle-expand"></i> {{ pro.area_sqft }} sqft</span>
+                      </div>
+                      <div class="property-agent">
+                        <img src="assets/img/real-estate/agent-1.webp" alt="Agent" class="agent-avatar">
+                        <div class="agent-info">
+                          <strong>{{ pro.listed_by.full_name }}</strong>
+                          <div class="agent-contact">
+                            <small><i class="bi bi-telephone"></i> {{ pro.listed_by.phone_number }} </small>
+                          </div>
+                        </div>
+                      </div>
+                      <a href="{% url "property_details" pro.slug %}" class="btn btn-primary w-100">View Details</a>
+                    </div>
+                  </div>
+                </div><!-- End Property Item -->
+                {% endfor %}
+                {% else %}
+                <h4> Sorry result not found! </h4>
+                {% endif %}
+                
+
+              </div>
+            </div>
+
+            
+
+            <nav class="mt-5" data-aos="fade-up" data-aos-delay="300">
+              <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                  <a class="page-link" href="#" tabindex="-1">Previous</a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                  <a class="page-link" href="#">Next</a>
+                </li>
+              </ul>
+            </nav>
+
+          </div>
+
+          <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+
+            <div class="properties-sidebar">
+
+                <div class="filter-widget">
+                    <h5 class="filter-title">Filter Properties</h5>
+                    
+                    <form method="get" action="{% url 'properties' %}">
+                      {% csrf_token %}
+                        <!-- Property Type -->
+                        <div class="filter-section">
+                            <label class="form-label">Property Type</label>
+                            <select class="form-select" name="property_type">  
+                                <option value="">All Types</option>
+                                {% for type_value, type_label in property_types %}
+                                <option value="{{ type_value }}" {% if current_filters.property_type == type_value %}selected{% endif %}>
+                                    {{ type_label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Purpose -->
+                        <div class="filter-section">
+                            <label class="form-label">Purpose</label>
+                            <select class="form-select" name="purpose">  
+                                <option value="">All</option>
+                                {% for purpose_value, purpose_label in purposes %}
+                                <option value="{{ purpose_value }}" {% if current_filters.purpose == purpose_value %}selected{% endif %}>
+                                    {{ purpose_label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Price Range - FIXED SWAPPED NAMES -->
+                        <div class="filter-section">
+                            <label class="form-label">Price Range (₹)</label>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <input type="number" class="form-control" placeholder="Min Price" 
+                                        name="min_price" value="{{ current_filters.min_price }}">  
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" class="form-control" placeholder="Max Price" 
+                                        name="max_price" value="{{ current_filters.max_price }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bedrooms -->
+                        <div class="filter-section">
+                            <label class="form-label">Bedrooms</label>
+                            <div class="bedroom-filter">
+                                <input type="hidden" name="bedrooms" id="bedrooms-input" value="{{ current_filters.bedrooms }}">
+                                <button type="button" class="btn btn-outline-secondary btn-sm filter-btn {% if not current_filters.bedrooms %}active{% endif %}" 
+                                        data-value="">Any</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm filter-btn {% if current_filters.bedrooms == '1' %}active{% endif %}" 
+                                        data-value="1">1+</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm filter-btn {% if current_filters.bedrooms == '2' %}active{% endif %}" 
+                                        data-value="2">2+</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm filter-btn {% if current_filters.bedrooms == '3' %}active{% endif %}" 
+                                        data-value="3">3+</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm filter-btn {% if current_filters.bedrooms == '4' %}active{% endif %}" 
+                                        data-value="4">4+</button>
+                            </div>
+                        </div>
+
+                        <!-- Bathrooms - FIXED TYPO -->
+                        <div class="filter-section">
+                            <label class="form-label">Bathrooms</label>
+                            <div class="bathroom-filter">
+                                <input type="hidden" name="bathrooms" id="bathrooms-input" value="{{ current_filters.bathrooms }}">
+                                <button type="button" class="btn btn-outline-secondary btn-sm filter-btn {% if not current_filters.bathrooms %}active{% endif %}"  
+                                        data-value="">Any</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm filter-btn {% if current_filters.bathrooms == '1' %}active{% endif %}" 
+                                        data-value="1">1+</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm filter-btn {% if current_filters.bathrooms == '2' %}active{% endif %}" 
+                                        data-value="2">2+</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm filter-btn {% if current_filters.bathrooms == '3' %}active{% endif %}" 
+                                        data-value="3">3+</button>
+                            </div>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="filter-section">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-control" placeholder="Enter city" 
+                                name="city" value="{{ current_filters.city }}">
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="filter-section">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <a href="{% url 'properties' %}" class="btn btn-outline-dark w-100 p-2">Reset</a>
+                                </div>
+                                <div class="col-6">
+                                    <button type="submit" class="btn btn-primary w-100 p-2">Apply Filters</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>  
+                </div>
+
+              <div class="featured-properties mt-4">
+                <h5>Featured Properties</h5>
+                
+                {% for feature in featured %}
+
+                <div class="featured-item">
+                  <div class="row g-3 align-items-center">
+                    <div class="col-5">
+                    
+                    {% if feature.images.all %}
+                    <img src="{{ feature.images.all.0.image.url }}" alt="{{ feature.title }}" class="img-fluid rounded">
+                    {% else %}
+                        <img src="{% static 'images/no-image.jpg' %}" alt="No Image" class="img-fluid rounded">
+                    {% endif %}
+                    
+                    </div>
+                    <div class="col-7">
+                      <h6 class="mb-1">{{ feature.title }}</h6>
+                      <p class="text-muted small mb-1">{{ feature.city }}</p>
+                      <strong class="text-primary">₹{{ feature.price }}</strong>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+                
+
+                
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section><!-- /Properties Section -->
+
+  </main>
+
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Bedroom filter buttons functionality
+    const bedroomButtons = document.querySelectorAll('.bedroom-filter .filter-btn');
+    const bedroomInput = document.getElementById('bedrooms-input');
+    
+    bedroomButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            bedroomButtons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+            // Update hidden input value
+            bedroomInput.value = this.getAttribute('data-value');
+        });
+    });
+    
+    // Bathroom filter buttons functionality
+    const bathroomButtons = document.querySelectorAll('.bathroom-filter .filter-btn');
+    const bathroomInput = document.getElementById('bathrooms-input');
+    
+    bathroomButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            bathroomButtons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+            // Update hidden input value
+            bathroomInput.value = this.getAttribute('data-value');
+        });
+    });
+    
+    // Optional: Auto-submit when select changes
+    const selects = document.querySelectorAll('select.form-select');
+    selects.forEach(select => {
+        select.addEventListener('change', function() {
+            this.form.submit();
+        });
+    });
+});
+</script>
+
+  
+
+
+{% endblock %}

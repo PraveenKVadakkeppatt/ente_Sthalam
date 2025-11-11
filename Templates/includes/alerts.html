@@ -1,0 +1,10 @@
+{% if messages %}
+    {% for message in messages %}
+    <div class="message-container alert alert-{{ message.tags }}">
+        {{ message }}
+        <button type="button" class="close-btn" onclick="this.parentElement.remove()">×</button>
+        {% comment %} {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Error: {% endif %}
+        {{ message }} {% endcomment %}
+    </div>
+    {% endfor %}
+{% endif %}
