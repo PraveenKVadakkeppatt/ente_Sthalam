@@ -101,17 +101,25 @@
             <div class="property-map" data-aos="fade-up" data-aos-delay="500">
               <h3>Location</h3>
               <div class="map-container">
-                {% if property.location_longitude and property.location_latitude %}
-                <iframe src="https://www.google.com/maps/embed?pb={{property.location_longitude}},{{property.location_latitude}} &z=15&output=embed" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                {% else %}
-                <div class="map-placeholder bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
-                  <div class="text-center">
-                    <i class="bi bi-map text-muted" style="font-size: 3rem;"></i>
-                    <p class="mt-2 text-muted">Location map not available</p>
-                  </div>
-                </div>
-                {% endif %}
+                  {% if property.location_latitude and property.location_longitude %}
+                      <iframe 
+                          width="100%" 
+                          height="400" 
+                          style="border:0;" 
+                          loading="lazy"
+                          allowfullscreen
+                          src="https://maps.google.com/maps?q={{ property.location_latitude }},{{ property.location_longitude }}&z=15&output=embed">
+                      </iframe>
+                  {% else %}
+                      <div class="map-placeholder bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                          <div class="text-center">
+                              <i class="bi bi-map text-muted" style="font-size: 3rem;"></i>
+                              <p class="mt-2 text-muted">Location map not available</p>
+                          </div>
+                      </div>
+                  {% endif %}
               </div>
+
               <div class="location-details">
                 <h4>Location Information</h4>
                 <p>{{ property.address }}, {{ property.city }}</p>
@@ -177,6 +185,7 @@
                 </div>
               </div>
 
+              {% if user.is_authenticated %}
               <!-- Agent Info -->
               <div class="agent-info">
                 <div class="agent-avatar">
@@ -190,8 +199,14 @@
                 </div>
               </div><!-- End Agent Info -->
 
+              {% else %}
+              <a href="{% url "login" %}" class="btn btn-primary w-100 m-3">Please Login for Agent Details</a>
+              {% endif %}
+
+
+
               <!-- Contact Form -->
-              <div class="contact-form">
+              {% comment %} <div class="contact-form">
                 <h4>Schedule a Tour</h4>
                 <form action="forms/contact.php" method="post" class="php-email-form">
                   <div class="row">
@@ -220,7 +235,7 @@
                     </div>
                   </div>
                 </form>
-              </div><!-- End Contact Form -->
+              </div><!-- End Contact Form --> {% endcomment %}
 
               <!-- Social Share -->
               <div class="social-share">

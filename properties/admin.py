@@ -13,7 +13,7 @@ class PropertyImageInline(admin.TabularInline):
 
 class PropertyAdmin(admin.ModelAdmin):
     inlines = [PropertyImageInline]
-    list_display = ['title', 'city', 'price', 'property_type', 'purpose']
+    list_display = ['title', 'city', 'price', 'property_type', 'purpose','is_verified',]
     list_filter = ['property_type', 'purpose', 'city', 'is_featured']
     search_fields = ['title','slug', 'description', 'city']
 

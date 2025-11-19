@@ -10,6 +10,6 @@ urlpatterns = [
     path('properties',views.properties,name="properties"),
     path('property_details/<slug:slug>/',views.property_details,name='property_details'),
     path('search_properties',views.search_properties,name="search_properties"),
-    path('create_property',views.create_property,name="create_property"),
+    path('add_property',views.add_property,name="add_property"),
     
 ]

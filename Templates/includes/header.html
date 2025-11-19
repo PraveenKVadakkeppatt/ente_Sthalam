@@ -51,10 +51,10 @@
       </nav>
       <nav id="navmenu" class="navmenu">
       {% if user.id is none %}
-      <a class="btn-getstarted" href="{% url "register" %}">Sign up or Log in</a>
+      <a class="btn-getstarted" href="{% url "login" %}">Sign up or Log in</a>
       
       {% else %} 
-      <li class="dropdown p-2" style="decoration:none;">
+      <li class="dropdown p-2" style="list-style-type: none;">
       <a class="btn-getstarted" href="#" style="color:hover:#fff;"><span>Welcome <b>{{ user.first_name }}</b></span></a>
         <ul>
           <li><a href="{% url "logout" %}">Log Out</a></li>

@@ -30,7 +30,16 @@
 
     <!-- Contact 2 Section -->
     <section id="contact-2" class="contact-2 section">
-
+      {% if request.GET.command == 'verification' %}
+      <div class="jumbotron text-center">
+        <h1 class="display-3">Thank you for registering with us !</h1>
+        <p class="lead"><strong>We have sent you a verification email address [{{ request.GET.mail }}]</strong> </p>
+        <hr>
+        <p>
+          Already verified ? <a href="{% url 'login' %}">Login</a>
+        </p>
+      </div>
+      {% else %}
 
       <!-- Contact Form Section (Overlapping) -->
       <div class="container form-container-overlap mt-4">
@@ -87,6 +96,7 @@
         </div>
 
       </div>
+      {% endif %}
 
     </section><!-- /Contact 2 Section -->
 

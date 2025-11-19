@@ -1,8 +1,10 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
-from properties.forms import PropertyForm, PropertyImageFormSet
+from properties.forms import PropertyForm
 from properties.models import Property, PropertyImage
 from django.db.models import Q
+from django.contrib import messages
+from django.forms import modelformset_factory
 # Create your views here.
 
 def property_details(request,slug):
@@ -148,5 +150,35 @@ def search_properties(request):
     return render(request,'properties/properties.html',context)
 
 
+@login_required
+def add_property(request):
+    if request.method == "POST":
+        form = PropertyForm(request.POST, request.FILES)
+        if form.is_valid():
+            property_obj = form.save(commit=False)
 
+            property_obj.listed_by = request.user
 
+            property_obj.save()
+
+            for i in range(1, 5):
+                image = form.cleaned_data.get(f'image{i}')
+                caption = form.cleaned_data.get(f'image{i}_caption', '')
+                is_primary = form.cleaned_data.get(f'image{i}_primary', False)
+
+                if image:
+                    PropertyImage.objects.create(
+                        property=property_obj,
+                        image=image,
+                        caption=caption,
+                        is_primary=is_primary
+                    )
+
+            messages.success(request, "Property added successfully!.Please wait for verification")
+            return redirect('add_property')
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = PropertyForm()
+
+    return render(request, 'properties/add_property.html', {'property_form': form})

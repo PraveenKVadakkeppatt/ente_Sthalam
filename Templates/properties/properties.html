@@ -103,7 +103,7 @@
                         <span><i class="bi bi-water"></i> {{ pro.bathrooms }} Bathroom </span>
                         <span><i class="bi bi-arrows-angle-expand"></i> {{ pro.area_sqft }} sqft</span>
                       </div>
-                      <div class="property-agent">
+                      {% comment %} <div class="property-agent">
                         <img src="assets/img/real-estate/agent-1.webp" alt="Agent" class="agent-avatar">
                         <div class="agent-info">
                           <strong>{{ pro.listed_by.full_name }}</strong>
@@ -111,7 +111,7 @@
                             <small><i class="bi bi-telephone"></i> {{ pro.listed_by.phone_number }} </small>
                           </div>
                         </div>
-                      </div>
+                      </div> {% endcomment %}
                       <a href="{% url "property_details" pro.slug %}" class="btn btn-primary w-100">View Details</a>
                     </div>
                   </div>

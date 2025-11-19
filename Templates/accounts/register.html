@@ -113,9 +113,12 @@
                   <div class="col-12 text-center">
                     <button type="submit" class="btn btn-primary btn-submit">REGISTER</button>
                   </div>
-{% comment %} 
+                  <div class="text-danger" role="alert">
                   {{ form.email.errors }}
-                  {{ form.non_field_errors }} {% endcomment %}
+                  {{ form.phone_number.errors }}
+                  {{ form.non_field_errors }}
+                </div>
+
                 </div>
               </form>
               <a href="{% url "login" %}">Already have an account</a>
